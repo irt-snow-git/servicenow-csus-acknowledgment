@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<record_update>
+    <sys_documentation element="ackitem" label="Ackitem" language="en" table="x_casus_ack_acknowledgment">
+        <sys_documentation action="INSERT_OR_UPDATE">
+            <element>ackitem</element>
+            <help/>
+            <hint/>
+            <label>Ackitem</label>
+            <language>en</language>
+            <name>x_casus_ack_acknowledgment</name>
+            <plural>Ackitems</plural>
+            <sys_class_name>sys_documentation</sys_class_name>
+            <sys_created_by>coletonbuehler</sys_created_by>
+            <sys_created_on>2017-10-04 17:48:27</sys_created_on>
+            <sys_customer_update>false</sys_customer_update>
+            <sys_id>8a48a16a6f254b00ad6cd4a21c3ee46f</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_name>Ackitem</sys_name>
+            <sys_package display_value="Acknowledgment" source="x_casus_ack">8e0add626f254b00ad6cd4a21c3ee421</sys_package>
+            <sys_policy/>
+            <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
+            <sys_scope display_value="Acknowledgment">8e0add626f254b00ad6cd4a21c3ee421</sys_scope>
+            <sys_update_name>sys_documentation_x_casus_ack_acknowledgment_ackitem_en</sys_update_name>
+            <sys_updated_by>coletonbuehler</sys_updated_by>
+            <sys_updated_on>2017-10-04 17:48:27</sys_updated_on>
+            <url/>
+            <url_target/>
+        </sys_documentation>
+    </sys_documentation>
+</record_update>

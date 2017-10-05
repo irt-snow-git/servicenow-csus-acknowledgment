@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<record_update sys_domain="global" table="sys_script">
+    <sys_script action="INSERT_OR_UPDATE">
+        <abort_action>false</abort_action>
+        <access>package_private</access>
+        <action_delete>false</action_delete>
+        <action_insert>true</action_insert>
+        <action_label/>
+        <action_name/>
+        <action_query>false</action_query>
+        <action_run_at>server</action_run_at>
+        <action_update>true</action_update>
+        <active>true</active>
+        <add_message>false</add_message>
+        <advanced>true</advanced>
+        <application/>
+        <change_fields>false</change_fields>
+        <client_callable>false</client_callable>
+        <collection>x_casus_ack_acknowledgment</collection>
+        <condition/>
+        <description/>
+        <execute_function>false</execute_function>
+        <filter_condition/>
+        <is_rest>false</is_rest>
+        <message/>
+        <name>Acknowledgment Requests</name>
+        <onclick/>
+        <order>100</order>
+        <priority>100</priority>
+        <read_access_action>false</read_access_action>
+        <rest_method/>
+        <rest_method_text/>
+        <rest_service/>
+        <rest_service_text/>
+        <rest_variables/>
+        <role_conditions/>
+        <script><![CDATA[if( AR_validateEmail(current.email) )
+{
+	// Only process when email is valid.
+
+	if( current.token == '' ) {
+		current.token = AR_MakeToken(36); // 36 character random token
+	}
+
+	if( current.state == 'New' ) {
+		// Build an email for an acknowledgement
+		AR_sendAckRequest( current.email , current.text_version );
+
+	}
+}
+
+function AR_sendAckRequest( recipients , termtext ) {
+	// create entry in sys_email outbox
+	var ackemail = new GlideRecord( 'sys_email' );
+	ackemail.initialize();
+	ackemail.content_type = 'text/html; charset="iso-8859-1"';
+	// find the terms and conditions text
+	var terms = new GlideRecord('x_casus_ack_terms');
+	terms.addQuery('name','STARTSWITH',termtext );
+	terms.orderByDesc('number');
+	terms.query();
+	if( terms.next() )
+	{ // if we got a hit, add info to body
+		ackemail.body = "<h1>"+terms.name+"</h1>";
+		ackemail.body += terms.body;
+		// record the sent version
+		current.sent_version = terms.name;
+		current.state = 'Sent';
+		current.sent = gs.nowDateTime();
+	} else {
+		// No text found. Should not send email and throw an error.
+		current.state = "TxtNotFound";
+		return;
+	}
+
+	// put in token for approval
+	ackemail.body += '<hr><a href="mailto:'+gs.getProperty('glide.email.user')+'?subject=RE%3A'+current.number+'%20-%20acknowledged&body=%0a%0aToken%3a' + current.token + '%20">Click Here to Accept</a><hr>';
+	ackemail.body += '<br>Token:' + current.token ;
+	ackemail.body += '<br>Ref:'+current.number;
+
+	ackemail.subject = current.number+' - ' + terms.name;
+	ackemail.recipients = recipients;
+	ackemail.mailbox = 'Outbox';
+	ackemail.type = 'send-ready';
+	ackemail.insertWithReferences();
+}
+
+function AR_MakeToken( length ) {
+	var chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+	var result = '';
+	for (var i = length; i > 0; --i) result += chars[Math.round(Math.random() * (chars.length - 1))];
+	return result;
+}
+
+// email validation function from http://badsyntax.co/post/javascript-email-validation-rfc822
+function AR_validateEmail(email) {
+	var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+	return re.test(email);
+}]]></script>
+        <sys_class_name>sys_script</sys_class_name>
+        <sys_created_by>coletonbuehler</sys_created_by>
+        <sys_created_on>2017-10-04 19:05:11</sys_created_on>
+        <sys_customer_update>true</sys_customer_update>
+        <sys_domain>global</sys_domain>
+        <sys_id>7338b1226f654b00ad6cd4a21c3ee452</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>Acknowledgment Requests</sys_name>
+        <sys_overrides/>
+        <sys_package display_value="Acknowledgment" source="x_casus_ack">8e0add626f254b00ad6cd4a21c3ee421</sys_package>
+        <sys_policy/>
+        <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
+        <sys_scope display_value="Acknowledgment">8e0add626f254b00ad6cd4a21c3ee421</sys_scope>
+        <sys_update_name>sys_script_7338b1226f654b00ad6cd4a21c3ee452</sys_update_name>
+        <sys_updated_by>coletonbuehler</sys_updated_by>
+        <sys_updated_on>2017-10-04 19:05:11</sys_updated_on>
+        <template/>
+        <when>before</when>
+    </sys_script>
+</record_update>
